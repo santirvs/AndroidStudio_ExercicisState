@@ -3,34 +3,29 @@ package com.example.myapplication
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.sharp.Star
-import androidx.compose.material3.Icon
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ChainStyle
-import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.myapplication.ui.theme.MyApplicationTheme
 
 class MainActivity : ComponentActivity() {
@@ -40,164 +35,90 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyApplicationTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { padding ->
-                    MyConstraintLayout( modifier = Modifier.padding(padding), 4)
+                    Exercici( modifier = Modifier.padding(padding), 1)
                 }
-
             }
         }
     }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hola $name!",
-        modifier = modifier
-    )
-}
+fun Exercici( modifier: Modifier = Modifier, exercici:Int = 1) {
 
-@Composable
-fun MyConstraintLayout( modifier: Modifier = Modifier, tipus:Int = 1) {
-
-    when (tipus) {
-        1 -> MyConstraintLayout_withGuidelines(modifier)
-        2 -> MyConstraintLayout_withoutGuidelines(modifier)
-        3 -> MyConstraintLayout_chains(modifier)
-        4 -> MyConstraintLayout_text(modifier)
-        5 -> MyConstraintLayout_Images(modifier)
-        else -> Greeting("ERROR", modifier)
+    when (exercici) {
+        1 -> Exercici1(modifier)
     }
 }
 
 
 @Composable
-fun MyConstraintLayout_withoutGuidelines(modifier: Modifier = Modifier) {
-    ConstraintLayout(modifier.fillMaxSize()) {
-        val (boxRed, boxYellow, boxGreen, boxCyan, boxMagenta) = createRefs()
+fun Exercici1(modifier: Modifier = Modifier) {
+//    Exercici 1 Calcula propina
+//    Crea una app que demani el preu total d’un menú i un percentatge
+//    de propina (mitjançant dos TextField diferents).
+//    Quan l’usuari premi sobre un botó amb el text “Calcular” es mostrarà
+//    el valor de la propina que hem de deixar, i el preu total (menú més propina).
 
-        Box(modifier = Modifier.size(120.dp).background(Color.Red).constrainAs(boxRed) {
-            top.linkTo(parent.top)
-            bottom.linkTo(parent.bottom)
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-        })
-        Box(modifier = Modifier.size(120.dp).background(Color.Yellow).constrainAs(boxYellow) {
-            bottom.linkTo(boxRed.top)
-            start.linkTo(boxRed.start)
-        })
-        Box(modifier = Modifier.size(120.dp).background(Color.Green).constrainAs(boxGreen) {
-            top.linkTo(boxRed.bottom)
-            start.linkTo(boxRed.start)
-        })
-        Box(modifier = Modifier.size(120.dp).background(Color.Cyan).constrainAs(boxCyan) {
-            bottom.linkTo(boxRed.bottom)
-            end.linkTo(boxRed.start)
-        })
-        Box(modifier = Modifier.size(120.dp).background(Color.Magenta).constrainAs(boxMagenta) {
-            bottom.linkTo(boxRed.bottom)
-            start.linkTo(boxRed.end)
-        })
+    Column(modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center) {
 
-    }
-}
+        var preuTotal by remember { mutableStateOf("") }
+        var percentatgePropina by remember { mutableStateOf("") }
+        var textPreu by remember { mutableStateOf( "" )}
 
-@Composable
-fun MyConstraintLayout_withGuidelines(modifier: Modifier = Modifier) {
-    ConstraintLayout(modifier.fillMaxSize()) {
-        val topGuide = createGuidelineFromTop(0.25f)
-        val leftGuide = createGuidelineFromStart(0.25f)
-        //val bottomGuide = createGuidelineFromBottom(0.25f)
-        //val rightGuide = createGuidelineFromEnd(0.25f)
-
-        val boxRed = createRef()
-        Box(modifier = Modifier.size(120.dp).background(Color.Red).constrainAs(boxRed){
-            top.linkTo(topGuide)
-            start.linkTo(leftGuide)
-        })
-
-    }
-}
-
-@Composable
-fun MyConstraintLayout_chains(modifier: Modifier = Modifier) {
-    ConstraintLayout(modifier.fillMaxSize().padding(vertical=100.dp)) {
-        val (boxRed, boxYellow, boxGreen) = createRefs()
-        Box(modifier.size(50.dp).background(Color.Red).constrainAs(boxRed){
-            start.linkTo(parent.start)
-            end.linkTo(boxYellow.start)
-        })
-        Box(modifier.size(50.dp).background(Color.Yellow).constrainAs(boxYellow){
-            start.linkTo(boxRed.end)
-            end.linkTo(boxGreen.start)
-        })
-        Box(modifier.size(50.dp).background(Color.Green).constrainAs(boxGreen){
-            start.linkTo(boxYellow.end)
-            end.linkTo(parent.end)
-        })
-
-        //createHorizontalChain(boxRed, boxYellow, boxGreen, chainStyle = ChainStyle.Packed)
-        //createHorizontalChain(boxRed, boxYellow, boxGreen, chainStyle = ChainStyle.Spread)
-        createHorizontalChain(boxRed, boxYellow, boxGreen, chainStyle = ChainStyle.SpreadInside)
-    }
-}
-
-@Composable
-fun MyConstraintLayout_text(modifier: Modifier = Modifier) {
-    Column(modifier.fillMaxSize().padding(vertical=100.dp)) {
-        Text(text = "This is my text example")
-        Text(
-            "This is my text example",
-            color = Color.Red,
-            fontSize = 30.sp,
-            fontWeight = FontWeight.Bold,
-            fontFamily = FontFamily.Cursive,
-            textDecoration = TextDecoration.Underline
+        TextField(
+            value = preuTotal,
+            onValueChange = { preuTotal = it },
+            label = { Text(text = "Preu total") },
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Green,
+                unfocusedContainerColor = Color.LightGray
+            )
         )
 
-        val myStyle = TextStyle(color = Color.Red,
-            fontSize = 50.sp,
-            fontWeight = FontWeight.Bold,
-            fontFamily = FontFamily.Cursive,
-            textDecoration = TextDecoration.Underline)
+        Spacer(modifier.padding( 5.dp))
 
-        Text(
-            "This is my text example",
-            style = myStyle
+        TextField(
+            value = percentatgePropina,
+            onValueChange = { percentatgePropina = it },
+            label = { Text(text = "Percentatge de propina")} ,
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Green,
+                unfocusedContainerColor = Color.LightGray
+            )
         )
 
+        Spacer(modifier.padding( 5.dp))
+
+        Button(
+            onClick = {
+                    var preuAmbPropina = preuTotal.toDouble() * (1 + percentatgePropina.toDouble()/100)
+                    textPreu = String.format(java.util.Locale("es", "ES"),"El preu total és %.2f €", preuAmbPropina)
+                      },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Blue,
+                contentColor = Color.White
+            ),
+            border = BorderStroke(5.dp, Color.Green)
+        ) {
+            Text(text = "Calcular")
+        }
+
+        Spacer(modifier.padding(5.dp))
+
+        Text(text = textPreu)
 
     }
-}
 
-@Composable
-fun MyConstraintLayout_Images(modifier: Modifier = Modifier) {
-    ConstraintLayout(modifier.fillMaxSize().padding(vertical=100.dp)) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_launcher_background),
-            contentDescription = "Example",
-            alpha = 0.75f,
-            //modifier = Modifier.clip(RoundedCornerShape(50f))
-            //modifier = Modifier.clip(CircleShape)
-            //modifier = Modifier.clip(CircleShape).border(4.dp, Color.Red)
-            modifier = Modifier.clip(CircleShape).border(4.dp, Color.Red, CircleShape)
-        )
-        Image(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground),
-            contentDescription = "Example",
-            alpha = 1f
-        )
-        Icon(imageVector = Icons.Sharp.Star,
-            contentDescription = "Icon Example",
-            tint = Color.Blue)
-    }
 
 }
 
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun GreetingPreview() {
+fun ExercicisAmbEstat() {
     MyApplicationTheme {
-        MyConstraintLayout(tipus = 5)
+        Exercici(modifier = Modifier,exercici = 1)
     }
 }
