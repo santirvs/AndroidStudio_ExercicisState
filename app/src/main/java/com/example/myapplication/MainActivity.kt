@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -783,18 +784,52 @@ fun Exercici6(modifier: Modifier = Modifier) {
 
 }
 
-//endregion exercici5
+//endregion exercici6
 
 //region exercici7 - DiceRoller
 
+data class DadesDices(
+    var dice1: Int,
+    var dice2: Int,
+    var changed: Boolean
+)
+
+fun getDiceImage(infoDices:DadesDices, numDice:Int) : Int
+{
+    if (numDice == 1) {
+      return getDiceImage(infoDices.dice1)
+    }
+    else
+        return getDiceImage(infoDices.dice2)
+}
+
+fun getDiceImage(side:Int) : Int {
+    return when (side) {
+        1 -> R.drawable.dice_1
+        2 -> R.drawable.dice_2
+        3 -> R.drawable.dice_3
+        4 -> R.drawable.dice_4
+        5 -> R.drawable.dice_5
+        6 -> R.drawable.dice_6
+        else -> R.drawable.empty_dice
+    }
+}
+
+fun rollDices(infoDices: DadesDices) {
+    rollDice(infoDices, 1)
+    rollDice(infoDices, 2)
+}
+
+fun rollDice(infoDices: DadesDices, dice:Int) {
+    if (dice==1) infoDices.dice1 = (1..6).random()
+    else infoDices.dice2 = (1..6).random()
+}
 
 @Composable
 fun Exercici7(modifier: Modifier = Modifier) {
 
-    Text("Hola")
-
-    Spacer(Modifier.padding(20.dp))
-
+    var infoDices by remember { mutableStateOf(DadesDices(0,0, false)) }
+    infoDices.changed = false
 
     Box {
         Image(
@@ -828,26 +863,49 @@ fun Exercici7(modifier: Modifier = Modifier) {
             }
             Row(modifier
                 .fillMaxWidth()
-                .weight(0.1f)) {
-                MyButton("HOLA QUE TAL") { }
+                .weight(0.1f),
+                horizontalArrangement = Arrangement.Center) {
+
+                Button(
+                    onClick = { rollDices(infoDices)
+                                infoDices = infoDices.copy(changed = true)
+                              },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red ),
+                    modifier = modifier.fillMaxWidth().padding(2.dp)
+                ) {
+                    Text(text = "Roll the dice")
+                }
             }
             Row(modifier
                 .weight(0.3f)) {
                 Image(
-                    modifier = modifier.fillMaxHeight(),
-                    painter = painterResource(R.drawable.dice_1),
+                    modifier = modifier.fillMaxHeight()
+                        .clickable {
+                            rollDice(infoDices,1)
+                            infoDices = infoDices.copy(changed = true)
+                        },
+                    painter = painterResource(getDiceImage(infoDices,1)),
                     contentDescription = null,
                     contentScale = ContentScale.FillHeight
                 )
                 Image(
-                    modifier = modifier.fillMaxHeight(),
-                    painter = painterResource(R.drawable.dice_2),
+                    modifier = modifier.fillMaxHeight()
+                        .clickable {
+                            rollDice(infoDices,2)
+                            infoDices = infoDices.copy(changed = true)
+                        },
+                    painter = painterResource(getDiceImage(infoDices,2)),
                     contentDescription = null,
                     contentScale = ContentScale.FillHeight
                 )
             }
 
             Spacer(modifier.weight(0.2f))
+
+            if (infoDices.dice1 == 6 && infoDices.dice2 == 6) {
+                val context = LocalContext.current
+                Toast.makeText(context, "JACKPOT", Toast.LENGTH_SHORT).show()
+            }
 
         }
     }
